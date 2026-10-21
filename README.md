@@ -24,6 +24,7 @@ it moves quickly, and its release notes come first.
 
 - [What you get](#what-you-get)
 - [1. Check your car is compatible](#1-check-your-car-is-compatible)
+  - [Reading the media driver version](#reading-the-media-driver-version)
   - [Plain MHI2 (Nvidia) units](#plain-mhi2-nvidia-units)
 - [2. What you need](#2-what-you-need)
 - [3. Button combinations](#3-button-combinations)
@@ -59,7 +60,7 @@ All of these must be true:
 
 | Check | How |
 | --- | --- |
-| The head unit is **MHI2Q**, not plain MHI2 | In the MMI's version information, the media driver version contains **`MMX2QC`** (for example `CLU8_MMX2QC_AU_ER_G22_…`). Plain MHI2 shows `CLU6_MMX2_…` instead, and this mod does not support it |
+| The head unit is **MHI2Q**, not plain MHI2 | In the MMI's version information, the media driver version contains **`MMX2QC`** (for example `CLU8_MMX2QC_AU_ER_G22_…`). Plain MHI2 shows `CLU6_MMX2_…` instead, and this mod does not support it. [How to read it](#reading-the-media-driver-version) |
 | You know the firmware **train** and **MU** | Red Engineering Menu → *Version information*, for example `MHI2Q_ER_AUG22_P4170` and software version `1117` |
 | Your region is **US, ER, JP or CN** | The second field of the train (`_ER_` = Europe/rest of world) |
 | The firmware is a **verified version** | US `P5087`, ER `P5092`, CN `K1004`, JP `P1017`. Older firmware must be updated first ([step 4](#4-update-the-head-unit-firmware-if-needed)) |
@@ -70,6 +71,38 @@ The installer double-checks most of this: it reads the train from the unit and r
 anything other than an Audi MHI2Q, without changing anything. Even so, check first. If your unit
 is plain MHI2, this guide doesn't apply; see [Plain MHI2 (Nvidia) units](#plain-mhi2-nvidia-units) for what
 exists instead.
+
+### Reading the media driver version
+
+The MMI's normal version-information screen shows a **media driver version** such as
+`CLU8_MMX2QC_AU_ER_G22_042PROD-1`. It's a quick first check, and you can read it without any
+engineering menu. Decoded:
+
+| Part | Example | Meaning |
+| --- | --- | --- |
+| `CLU…` | `CLU8` | MIB2 software generation. Higher is newer |
+| `MMX2QC` / `MMX2` | `MMX2QC` | `MMX2QC` = **MHI2Q** (supported). `MMX2` = plain MHI2 (not supported) |
+| brand | `AU` | Audi |
+| region | `ER` | the same region code as the train: `ER`, `US`, `JP`, `CN`… |
+| family | `G22` | the `AUG22` family (A4/A5/S5, Q5, Q7) |
+| build | `042PROD` | build number within that generation |
+
+**The `CLU` number gives a rough idea of how old the firmware is.** Known reference points:
+
+| Firmware | Generation | Where the value comes from |
+| --- | --- | --- |
+| `MHI2Q_ER_AUG22_P4170`, MU 1117 | media driver `CLU8_MMX2QC_AU_ER_G22_042PROD-1` | read off the MMI screen before updating |
+| `MHI2Q_ER_AUG22_P5092`, MU 1329 | **CLU10**: navigation `CLU10_…`, RCC `MIB2CLU10-Trunk_…`, application image `…MMX2QC_AU_ER_G22_201PROD` | from an M.I.B. backup of a P5092 unit. The media-driver string as the MMI screen shows it on P5092 isn't confirmed yet |
+
+So a unit showing **`CLU7_…` or `CLU8_…` is older than P5092 and needs the
+[firmware update](#4-update-the-head-unit-firmware-if-needed) first**. For example, a
+`CLU7_MMX2QC_AU_ER_G22_179PROD-1` unit is an MHI2Q, Audi, European `AUG22` unit on older
+firmware: supported, once updated to `MHI2Q_ER_AUG22_P5092`.
+
+> [!NOTE]
+> The media driver version is only a hint. **The train in the Red Engineering Menu (*Version
+> information*) is what counts**: it names the exact firmware (`MHI2Q_ER_AUG22_P…`) and MU number,
+> and the installer checks the same thing.
 
 ### Plain MHI2 (Nvidia) units
 
