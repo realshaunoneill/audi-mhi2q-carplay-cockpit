@@ -24,6 +24,7 @@ it moves quickly, and its release notes come first.
 
 - [What you get](#what-you-get)
 - [1. Check your car is compatible](#1-check-your-car-is-compatible)
+  - [Plain MHI2 (Nvidia) units](#plain-mhi2-nvidia-units)
 - [2. What you need](#2-what-you-need)
 - [3. Button combinations](#3-button-combinations)
 - [4. Update the head unit firmware (if needed)](#4-update-the-head-unit-firmware-if-needed)
@@ -66,9 +67,51 @@ All of these must be true:
 | **Stock CarPlay already works** on the main screen | Plug your iPhone in. The mod extends Audi's CarPlay; it does not activate it |
 
 The installer double-checks most of this: it reads the train from the unit and refuses to run on
-anything other than an Audi MHI2Q, without changing anything. Even so, check first. On a plain
-MHI2 unit, see [edzenis/mib2high-carplay-rgi](https://github.com/edzenis/mib2high-carplay-rgi)
-instead.
+anything other than an Audi MHI2Q, without changing anything. Even so, check first. If your unit
+is plain MHI2, this guide doesn't apply; see [Plain MHI2 (Nvidia) units](#plain-mhi2-nvidia-units) for what
+exists instead.
+
+### Plain MHI2 (Nvidia) units
+
+**This mod does not support plain MHI2, and the steps in this guide don't apply to it.** Its
+installer refuses MHI2 units without changing anything.
+
+**How to tell them apart:**
+
+| | MHI2Q (this guide) | Plain MHI2 |
+| --- | --- | --- |
+| Train (Red menu → Version information) | starts `MHI2Q_` | starts `MHI2_` |
+| Media driver version (MMI version info) | contains `MMX2QC` | contains `MMX2` (e.g. `CLU6_MMX2_…`) |
+| Chipset | Qualcomm | Nvidia Tegra |
+
+Both shipped in the same models, the B9 A4/A5/S5 and the Q7 4M among them, so check your own
+unit rather than going by the car.
+
+**Why the mod can't simply be ported:** MHI2 is a different platform underneath. It talks to the
+iPhone through a different CarPlay software stack, and it draws video on different hardware. That
+means rebuilding the mod's hooks and its cockpit-map renderer. The mod's own
+[MHI2 port notes](https://github.com/luka-dev/mib2q-carplay-rgi/blob/main/docs/reference/MHI2_MU1439_PORT.md)
+rate the route-guidance part "medium, viable" and the cockpit map a renderer rewrite. The maintainer has
+marked MHI2 support [won't fix / help wanted](https://github.com/luka-dev/mib2q-carplay-rgi/issues/3).
+
+**What exists for MHI2 instead.** These are independent community projects. Follow each one's own
+instructions, and treat this table as a starting point, as of 2026-10-21:
+
+| Train (cars) | Project | What it does | Tested on |
+| --- | --- | --- | --- |
+| `MHI2_*_AU37x` (A3 8V), also `MHI2_*_AU276` (Q2) | [chefranov/mhi2-au37x-carplay](https://github.com/chefranov/mhi2-au37x-carplay) | The closest equivalent to this mod: CarPlay map in the Virtual Cockpit, turn-by-turn in the cluster's maneuver tile, cover art, CarPlay calls on the phone tab. Installs through M.I.B., and the installer checks the train first | A3 8V `MHI2_ER_AU37x_P5089` (MU1326), plus a Q2 |
+| `MHI2_ER_AUG22_K2161` (MU1421) | [edzenis/mib2high-carplay-altscreen-rgi](https://github.com/edzenis/mib2high-carplay-altscreen-rgi) | *AltScreen*: the CarPlay map and an instruction card in the cluster, plus turn arrows on the factory head-up display. An older *RGI* release does the head-up display only | **One car**, a Q7 4M. It explicitly does not claim compatibility with other MHI2 builds, other clusters or MHI2Q |
+| VW / Škoda MHI2, MU1102 / MU1367 / MU1440 (Active Info Display 790/791) | [omonob/MHI2-Carplay-Maps](https://github.com/omonob/MHI2-Carplay-Maps) | CarPlay map video in the Active Info Display, plus steering-wheel map controls | VW and Škoda units. Installs **only through its own MQB Toolbox package**: it withdrew its M.I.B. packages, so don't use the "CarPlay Maps VC" copy bundled in M.I.B. V3.8.0 |
+| Other Audi MHI2: TT (`AU43x`), R8 (`AU62x`), A6/A7 C7 (`AU57x`), newer Nvidia B9/Q7 firmware (`MHI2_*_AUG22_K334x`) | — | Nothing car-tested that we know of | — |
+
+An Nvidia B9 is in an awkward spot. It runs the same `AUG22` train family as the Q7, and K2161
+is one of its firmware versions, so the edzenis project is the nearest fit. But it has only been
+tested on a Q7, whose Virtual Cockpit software differs from the B9's.
+
+> [!CAUTION]
+> **Never cross-flash.** The firmware in [step 4](#4-update-the-head-unit-firmware-if-needed) is
+> for MHI2Q units only. MHI2 and MHI2Q are different hardware: flashing MHI2Q firmware onto an MHI2
+> unit, or the reverse, can brick it.
 
 ## 2. What you need
 
@@ -105,6 +148,10 @@ Other models (Q7 4M, A6/A7 C7) use different combinations. See mibvault's
 
 Skip this step if your train is already the verified one for your region (for example
 `MHI2Q_ER_AUG22_P5092`, MU 1329).
+
+> [!WARNING]
+> **MHI2Q units only.** This step is for trains that start `MHI2Q_`. Never flash this firmware onto a
+> plain MHI2 (`MHI2_…`) unit; see [Plain MHI2 (Nvidia) units](#plain-mhi2-nvidia-units).
 
 The mod replaces some of the head unit's own Java classes and an audio driver, and those are only
 verified on specific firmware. On older firmware the head unit can get stuck on the Audi logo
